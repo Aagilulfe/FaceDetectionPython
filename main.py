@@ -1,5 +1,5 @@
-import FaceDetectorMediapipe
-import FaceDetectorBlob
+import scripts.FaceDetectorMediapipe
+import scripts.FaceDetectorBlob
 
 
 FaceDetectorMediapipe.main()    #faster
