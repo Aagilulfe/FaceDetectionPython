@@ -24,14 +24,50 @@
   <ItemGroup>
     <Compile Include="FaceDetectorMediapipe.py" />
     <Compile Include="FaceDetectorBlob.py" />
+    <Compile Include="GPU\Detector.py" />
+    <Compile Include="GPU\main.py" />
+    <Compile Include="GPU\receiver.py" />
     <Compile Include="main.py" />
+    <Compile Include="FaceMeshMediapipe.py" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="GPU\" />
+    <Folder Include="GPU\input_data\" />
+    <Folder Include="GPU\models\" />
     <Folder Include="models\" />
+    <Folder Include="resources\" />
+    <Folder Include="resources\haarcascades\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="GPU\input_data\group.jpg" />
+    <Content Include="GPU\input_data\monteverdi.mp4" />
+    <Content Include="GPU\models\res10_300x300_ssd_iter_140000.caffemodel" />
+    <Content Include="GPU\models\res10_300x300_ssd_iter_140000.prototxt" />
     <Content Include="models\res10_300x300_ssd_iter_140000.caffemodel" />
     <Content Include="models\res10_300x300_ssd_iter_140000.prototxt" />
+    <Content Include="resources\1.jpg" />
+    <Content Include="resources\cards.jpg" />
+    <Content Include="resources\haarcascades\haarcascade_eye.xml" />
+    <Content Include="resources\haarcascades\haarcascade_eye_tree_eyeglasses.xml" />
+    <Content Include="resources\haarcascades\haarcascade_frontalcatface.xml" />
+    <Content Include="resources\haarcascades\haarcascade_frontalcatface_extended.xml" />
+    <Content Include="resources\haarcascades\haarcascade_frontalface_alt.xml" />
+    <Content Include="resources\haarcascades\haarcascade_frontalface_alt2.xml" />
+    <Content Include="resources\haarcascades\haarcascade_frontalface_alt_tree.xml" />
+    <Content Include="resources\haarcascades\haarcascade_frontalface_default.xml" />
+    <Content Include="resources\haarcascades\haarcascade_fullbody.xml" />
+    <Content Include="resources\haarcascades\haarcascade_lefteye_2splits.xml" />
+    <Content Include="resources\haarcascades\haarcascade_licence_plate_rus_16stages.xml" />
+    <Content Include="resources\haarcascades\haarcascade_lowerbody.xml" />
+    <Content Include="resources\haarcascades\haarcascade_profileface.xml" />
+    <Content Include="resources\haarcascades\haarcascade_righteye_2splits.xml" />
+    <Content Include="resources\haarcascades\haarcascade_russian_plate_number.xml" />
+    <Content Include="resources\haarcascades\haarcascade_smile.xml" />
+    <Content Include="resources\haarcascades\haarcascade_upperbody.xml" />
+    <Content Include="resources\lambo.png" />
+    <Content Include="resources\lena.png" />
+    <Content Include="resources\shapes.png" />
+    <Content Include="resources\zorba.mp4" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

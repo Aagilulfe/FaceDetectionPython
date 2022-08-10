@@ -92,8 +92,16 @@ class FaceDetector():
 
 
 def main(use_cuda=False):
+
+    dispW= 640
+    dispH= 480
     
-    cap = cv2.VideoCapture(0)
+    camSet = 0
+    #camSet='ksvideosrc ! video/x-raw(memory:NVMM), width=640, height=480, format=NV12, framerate=21/1 ! nvvidconv flip-method=0 ! video/x-raw, width='+str(dispW)+', height='+str(dispH)+', format=BGRx ! videoconvert ! video/x-raw, format=BGR ! appsink'
+    
+    cap = cv2.VideoCapture(camSet)
+    assert cap.isOpened(), 'Cannot open camera'
+    
     pTime = 0
     detector = FaceDetector("0.0.0.0", 5000, use_cuda)
     
@@ -104,6 +112,8 @@ def main(use_cuda=False):
     
     while True:
         success, img = cap.read()
+        if not success:
+            continue
         
         if detection_flag:
             img, bboxs = detector.findFaces(img)
@@ -119,17 +129,13 @@ def main(use_cuda=False):
 
         fps_stat.update()
 
-        key_detect = cv2.waitKey(1) & 0xFF
-        if key_detect == ord('d'):
-            detection_flag = not(detection_flag)
-        
-        key_stats = cv2.waitKey(1) & 0xFF
-        if key_stats == ord('s'):
-            stats_flag = not(stats_flag)
-
         key = cv2.waitKey(1) & 0xFF
         if key == ord('q'):
             break
+        if key == ord('d'):
+            detection_flag = not(detection_flag)
+        if key == ord('s'):
+            stats_flag = not(stats_flag)
     
     # Prints the FPS stats
     fps_stat.stop()

@@ -88,17 +88,13 @@ def main():
 
         fps_stat.update()
 
-        key_detect = cv2.waitKey(1) & 0xFF
-        if key_detect == ord('d'):
-            detection_flag = not(detection_flag)
-        
-        key_stats = cv2.waitKey(1) & 0xFF
-        if key_stats == ord('s'):
-            stats_flag = not(stats_flag)
-
         key = cv2.waitKey(1) & 0xFF
         if key == ord('q'):
             break
+        if key == ord('d'):
+            detection_flag = not(detection_flag)
+        if key == ord('s'):
+            stats_flag = not(stats_flag)
     
     # Prints the FPS stats
     fps_stat.stop()
