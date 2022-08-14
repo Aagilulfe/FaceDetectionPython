@@ -2,10 +2,11 @@
 
 from __future__ import division
 import cv2
-#import numpy as np
+import numpy as np
 import socket
 import struct
 import math
+import time
 
 
 class FrameSegment(object):
@@ -16,7 +17,7 @@ class FrameSegment(object):
     MAX_DGRAM = 2**16
     MAX_IMAGE_DGRAM = MAX_DGRAM - 64 # extract 64 bytes in case UDP frame overflown
     
-    def __init__(self, sock, port, addr="127.0.0.1"):
+    def __init__(self, sock, port, addr="192.168.1.45"): #127.0.0.1
         self.s = sock
         self.port = port
         self.addr = addr
@@ -33,10 +34,16 @@ class FrameSegment(object):
         array_pos_start = 0
         while count:
             array_pos_end = min(size, array_pos_start + self.MAX_IMAGE_DGRAM)
-            self.s.sendto(struct.pack("B", count) +
-                dat[array_pos_start:array_pos_end], 
-                (self.addr, self.port)
-                )
+            if count == 1:
+                self.s.sendto(struct.pack("B", count) + struct.pack("q", int(time.time()*1000)) + 
+                    dat[array_pos_start:array_pos_end], 
+                    (self.addr, self.port)
+                    )
+            else:
+                self.s.sendto(struct.pack("B", count) + #struct.pack("q", int(time.time()*1000)) + 
+                    dat[array_pos_start:array_pos_end], 
+                    (self.addr, self.port)
+                    )
             array_pos_start = array_pos_end
             count -= 1
 
