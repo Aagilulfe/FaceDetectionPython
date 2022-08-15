@@ -17,7 +17,7 @@ class FrameSegment(object):
     MAX_DGRAM = 2**16
     MAX_IMAGE_DGRAM = MAX_DGRAM - 64 # extract 64 bytes in case UDP frame overflown
     
-    def __init__(self, sock, port, addr="192.168.1.45"): #127.0.0.1
+    def __init__(self, sock, port, addr="127.0.0.1"): #127.0.0.1
         self.s = sock
         self.port = port
         self.addr = addr
