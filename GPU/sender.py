@@ -21,11 +21,16 @@ class FrameSegment(object):
         self.s = sock
         self.port = port
         self.addr = addr
+        self.ping = 0
     
-    def receive(self):
-        receive_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        receive_socket.bind(("192.168.1.37", 12345))
-        seg, _ = self.s.recvfrom(self.MAX_DGRAM)
+    def receive_feedback(self):
+        feedback_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        feedback_socket.bind(("192.168.1.37", 12345))
+        feedback_socket.settimeout(0.04)
+        try:
+            seg, _ = feedback_socket.recvfrom(self.MAX_DGRAM)
+        except socket.timeout:
+            return
         return seg
         
     
@@ -48,8 +53,9 @@ class FrameSegment(object):
                     (self.addr, self.port)
                     )
                 
-                seg = self.receive()
-                self.ping = (struct.unpack("q", seg[1:9])[0] - timestamp) // 2
+                seg = self.receive_feedback()
+                if seg != None:
+                    self.ping = (struct.unpack("q", seg[1:9])[0] - timestamp) // 2
                 
             else:
                 self.s.sendto(struct.pack("B", count) + #struct.pack("q", int(time.time()*1000)) + 
