@@ -55,7 +55,8 @@ class FrameSegment(object):
                 
                 seg = self.receive_feedback()
                 if seg != None:
-                    self.ping = (struct.unpack("q", seg[1:9])[0] - timestamp) // 2
+                    print(struct.unpack("q", seg)[0])
+                    self.ping = (struct.unpack("q", seg)[0] - timestamp) // 2
                 
             else:
                 self.s.sendto(struct.pack("B", count) + #struct.pack("q", int(time.time()*1000)) + 

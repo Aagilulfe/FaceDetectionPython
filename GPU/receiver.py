@@ -20,9 +20,8 @@ def dump_buffer(s):
 
 def resend_timestamp(s, timestamp, sender_addr):
     sender_port = 12345
-    print(timestamp)
-    print(struct.pack("q", timestamp))
-    print(struct.pack("q", timestamp))
+    #print(timestamp)
+    #print(struct.pack("q", timestamp))
     s.sendto(struct.pack("q", timestamp), (sender_addr, sender_port))
 
 def main():
