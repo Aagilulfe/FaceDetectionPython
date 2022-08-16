@@ -33,7 +33,7 @@ def main():
         #print(addr)
         #print(struct.unpack("B", seg[0:1]))
         if struct.unpack("B", seg[0:1])[0] > 1:
-            print(struct.unpack("B", seg[0:1]))
+            #print(struct.unpack("B", seg[0:1]))
             #print(seg[1:50])
             #print(struct.unpack("q", seg[1:9]))
             dat += seg[1:]

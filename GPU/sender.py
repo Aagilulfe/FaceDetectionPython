@@ -61,7 +61,8 @@ def main():
     while (cap.isOpened()):
         _, frame = cap.read()
         cv2.imshow("sender", frame)
-        cv2.waitKey(1)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
         fs.udp_frame(frame)
     cap.release()
     cv2.destroyAllWindows()
