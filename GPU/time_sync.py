@@ -13,3 +13,6 @@ def synchronize():
         print('Could not sync with time server.')
 
     print('Done.')
+
+if __name__ == "__main__":
+    synchronize()
