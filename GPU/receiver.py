@@ -37,7 +37,7 @@ def main():
 
     while True:
         seg, sender_addr = s.recvfrom(MAX_DGRAM)
-        print(sender_addr)
+        #print(sender_addr)
         #print(struct.unpack("B", seg[0:1]))
         if struct.unpack("B", seg[0:1])[0] > 1:
             #print(struct.unpack("B", seg[0:1]))
@@ -49,7 +49,7 @@ def main():
             #print(struct.unpack("q", seg[1:9]))
             timestamp = struct.unpack("q", seg[1:9])[0]
             
-            resend_timestamp(s, timestamp, sender_addr)
+            resend_timestamp(s, timestamp, sender_addr[0])
 
             #ping = int(time.time()*1000) - timestamp
             dat += seg[9:]
