@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import division
+from smtplib import SMTPSenderRefused
 import cv2
 import numpy as np
 import socket
@@ -20,10 +21,12 @@ def dump_buffer(s):
 
 def resend_timestamp(s, timestamp, sender_addr):
     sender_port = 12345
+    sender_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sender_socket.bind((sender_addr, sender_port))
     print(timestamp)
     print(struct.pack("q", timestamp))
     print(type(struct.pack("q", timestamp)))
-    s.sendto(struct.pack("q", timestamp), (sender_addr, sender_port))
+    sender_socket.sendto(struct.pack("q", timestamp))
 
 def main():
     """ Getting image udp frame &
