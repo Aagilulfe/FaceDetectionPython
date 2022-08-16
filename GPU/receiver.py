@@ -36,8 +36,6 @@ def main():
 
     while True:
         seg, sender_addr = s.recvfrom(MAX_DGRAM)
-        #print(sender_addr)
-        #print(struct.unpack("B", seg[0:1]))
         if struct.unpack("B", seg[0:1])[0] > 1:
             #print(struct.unpack("B", seg[0:1]))
             #print(seg[1:50])

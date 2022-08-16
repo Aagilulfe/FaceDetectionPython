@@ -55,8 +55,9 @@ class FrameSegment(object):
                 
                 seg = self.receive_feedback()
                 if seg != None:
-                    print(struct.unpack("q", seg)[0])
-                    self.ping = (struct.unpack("q", seg)[0] - timestamp) // 2
+                    new_timestamp = int(time.time() * 1000)
+                    #print(struct.unpack("q", seg)[0], new_timestamp)
+                    self.ping = (new_timestamp - struct.unpack("q", seg)[0]) // 2
                 
             else:
                 self.s.sendto(struct.pack("B", count) + #struct.pack("q", int(time.time()*1000)) + 
@@ -83,7 +84,7 @@ def main():
         fs.udp_frame(frame)
         
         ping = fs.ping
-        cv2.putText(frame, str(ping), (10,100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
+        cv2.putText(frame, str(ping)+"ms", (10,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
         cv2.imshow("sender", frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
