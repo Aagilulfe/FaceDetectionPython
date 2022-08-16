@@ -22,8 +22,8 @@ def resend_timestamp(s, timestamp, sender_addr):
     sender_port = 12345
     print(timestamp)
     print(struct.pack("q", timestamp))
-    s.sendto(struct.pack("q", timestamp), 
-             (sender_addr, sender_port))
+    print(type(struct.pack("q", timestamp)))
+    s.sendto(struct.pack("q", timestamp), (sender_addr, sender_port))
 
 def main():
     """ Getting image udp frame &
