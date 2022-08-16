@@ -21,7 +21,14 @@ class FrameSegment(object):
         self.s = sock
         self.port = port
         self.addr = addr
-
+    
+    def receive(self):
+        receive_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        receive_socket.bind(("192.168.1.37", 12345))
+        seg, _ = self.s.recvfrom(self.MAX_DGRAM)
+        return seg
+        
+    
     def udp_frame(self, img):
         """ 
         Compress image and Break down
@@ -35,15 +42,21 @@ class FrameSegment(object):
         while count:
             array_pos_end = min(size, array_pos_start + self.MAX_IMAGE_DGRAM)
             if count == 1:
-                self.s.sendto(struct.pack("B", count) + struct.pack("q", int(time.time()*1000)) + 
+                timestamp = int(time.time()*1000)
+                self.s.sendto(struct.pack("B", count) + struct.pack("q", timestamp) + 
                     dat[array_pos_start:array_pos_end], 
                     (self.addr, self.port)
                     )
+                
+                seg = self.receive()
+                self.ping = (struct.unpack("q", seg[1:9])[0] - timestamp) // 2
+                
             else:
                 self.s.sendto(struct.pack("B", count) + #struct.pack("q", int(time.time()*1000)) + 
                     dat[array_pos_start:array_pos_end], 
                     (self.addr, self.port)
                     )
+                
             array_pos_start = array_pos_end
             count -= 1
 
@@ -60,10 +73,14 @@ def main():
     #cap = cv2.VideoCapture(1)   #ZED cam
     while (cap.isOpened()):
         _, frame = cap.read()
+        fs.udp_frame(frame)
+        
+        ping = fs.ping
+        cv2.putText(frame, str(ping), (10,100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
         cv2.imshow("sender", frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-        fs.udp_frame(frame)
+        
     cap.release()
     cv2.destroyAllWindows()
     s.close()

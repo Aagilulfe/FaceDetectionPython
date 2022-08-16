@@ -18,10 +18,10 @@ def dump_buffer(s):
             print("finish emptying buffer")
             break
 
-def resend_timestamp(timestamp):
-    sender_addr = "192.168.1.37"
+def resend_timestamp(s, timestamp, sender_addr):
     sender_port = 12345
-    s.sendto(struct.pack("q", timestamp), sender_addr, sender_port)
+    s.sendto(struct.pack("q", timestamp), 
+             (sender_addr, sender_port))
 
 def main():
     """ Getting image udp frame &
@@ -34,8 +34,7 @@ def main():
     dump_buffer(s)
 
     while True:
-        seg, addr = s.recvfrom(MAX_DGRAM)
-        print(addr)
+        seg, sender_addr = s.recvfrom(MAX_DGRAM)
         #print(addr)
         #print(struct.unpack("B", seg[0:1]))
         if struct.unpack("B", seg[0:1])[0] > 1:
@@ -47,7 +46,9 @@ def main():
             #print(struct.unpack("B", seg[0:1]))
             #print(struct.unpack("q", seg[1:9]))
             timestamp = struct.unpack("q", seg[1:9])[0]
-            resend_timestamp(timestamp)
+            
+            resend_timestamp(s, timestamp, sender_addr)
+
             #ping = int(time.time()*1000) - timestamp
             dat += seg[9:]
             img = cv2.imdecode(np.frombuffer(dat, dtype=np.uint8), 1)
