@@ -18,6 +18,11 @@ def dump_buffer(s):
             print("finish emptying buffer")
             break
 
+def resend_timestamp(timestamp):
+    sender_addr = "192.168.1.37"
+    sender_port = 12345
+    s.sendto(struct.pack("q", timestamp), sender_addr, sender_port)
+
 def main():
     """ Getting image udp frame &
     concate before decode and output image """
@@ -30,6 +35,7 @@ def main():
 
     while True:
         seg, addr = s.recvfrom(MAX_DGRAM)
+        print(addr)
         #print(addr)
         #print(struct.unpack("B", seg[0:1]))
         if struct.unpack("B", seg[0:1])[0] > 1:
@@ -41,10 +47,11 @@ def main():
             #print(struct.unpack("B", seg[0:1]))
             #print(struct.unpack("q", seg[1:9]))
             timestamp = struct.unpack("q", seg[1:9])[0]
-            ping = int(time.time()*1000) - timestamp
+            resend_timestamp(timestamp)
+            #ping = int(time.time()*1000) - timestamp
             dat += seg[9:]
             img = cv2.imdecode(np.frombuffer(dat, dtype=np.uint8), 1)
-            cv2.putText(img, str(ping)+"ms", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            #cv2.putText(img, str(ping)+"ms", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
             cv2.imshow('receiver', img)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
