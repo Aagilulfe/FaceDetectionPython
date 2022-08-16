@@ -45,7 +45,7 @@ def main():
             dat += seg[9:]
             img = cv2.imdecode(np.frombuffer(dat, dtype=np.uint8), 1)
             cv2.putText(img, str(ping)+"ms", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-            cv2.imshow('frame', img)
+            cv2.imshow('receiver', img)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
             dat = b''
