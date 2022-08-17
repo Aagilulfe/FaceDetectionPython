@@ -19,18 +19,18 @@ def dump_buffer(s):
             break
 
 def resend_timestamp(s, timestamp, sender_addr):
-    sender_port = 12345
+    sender_port = 12346
     #print(timestamp)
     #print(struct.pack("q", timestamp))
     s.sendto(struct.pack("q", timestamp), (sender_addr, sender_port))
 
-def main():
+def main(local_address):
     """ Getting image udp frame &
     concate before decode and output image """
     
     # Set up socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.bind(('192.168.1.102', 12345))    #127.0.0.1
+    s.bind((local_address, 12345))    #127.0.0.1
     dat = b''
     dump_buffer(s)
 
@@ -62,4 +62,4 @@ def main():
     s.close()
 
 if __name__ == "__main__":
-    main()
+    main('192.168.1.102')
