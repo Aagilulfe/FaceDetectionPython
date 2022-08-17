@@ -26,13 +26,16 @@ class FrameSegment(object):
     def receive_feedback(self):
         feedback_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         feedback_socket.bind(("192.168.1.102", 12346))
-        feedback_socket.settimeout(0.04)
+        feedback_socket.settimeout(0.5)
         try:
             seg, _ = feedback_socket.recvfrom(self.MAX_DGRAM)
         except socket.timeout:
             return
         return seg
-        
+    
+    def send_ping_result(self): # 255 flag to indicate ping packet
+        print(self.ping)
+        self.s.sendto(struct.pack("B", 255) + struct.pack("q", self.ping), (self.addr, self.port))
     
     def udp_frame(self, img):
         """ 
@@ -55,7 +58,7 @@ class FrameSegment(object):
                 
                 seg = self.receive_feedback()
                 if seg != None:
-                    print(seg)
+                    # print(seg)
                     new_timestamp = int(time.time() * 1000)
                     #print(struct.unpack("q", seg)[0], new_timestamp)
                     self.ping = (new_timestamp - struct.unpack("q", seg)[0]) // 2
@@ -83,10 +86,15 @@ def main():
     #cap = cv2.VideoCapture(1)   #ZED cam
     while (cap.isOpened()):
         _, frame = cap.read()
+        print("send frame")
         fs.udp_frame(frame)
         
         ping = fs.ping
+        print("send ping result")
+        fs.send_ping_result()
         cv2.putText(frame, str(ping)+"ms", (10,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
+
+
         cv2.imshow("sender", frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
