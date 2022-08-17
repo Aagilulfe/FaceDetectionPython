@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import division
+from tabnanny import verbose
 import cv2
 import numpy as np
 import socket
@@ -8,6 +9,8 @@ import struct
 import math
 import time
 
+#Flag for print activation
+verbose = False
 
 class FrameSegment(object):
     """ 
@@ -22,19 +25,20 @@ class FrameSegment(object):
         self.port = port
         self.addr = addr
         self.ping = 0
+        self.feedback_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.feedback_socket.bind(("192.168.1.102", 12346))
     
     def receive_feedback(self):
-        feedback_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        feedback_socket.bind(("192.168.1.102", 12346))
-        feedback_socket.settimeout(0.5)
+        self.feedback_socket.settimeout(0.01)
         try:
-            seg, _ = feedback_socket.recvfrom(self.MAX_DGRAM)
+            seg, _ = self.feedback_socket.recvfrom(self.MAX_DGRAM)
         except socket.timeout:
+            print("!!!!timeout = no feedback")
             return
         return seg
     
     def send_ping_result(self): # 255 flag to indicate ping packet
-        print(self.ping)
+        # print(self.ping)
         self.s.sendto(struct.pack("B", 255) + struct.pack("q", self.ping), (self.addr, self.port))
     
     def udp_frame(self, img):
@@ -56,6 +60,7 @@ class FrameSegment(object):
                     (self.addr, self.port)
                     )
                 
+                if verbose: print("waiting for feedback")
                 seg = self.receive_feedback()
                 if seg != None:
                     # print(seg)
@@ -86,11 +91,11 @@ def main():
     #cap = cv2.VideoCapture(1)   #ZED cam
     while (cap.isOpened()):
         _, frame = cap.read()
-        print("send frame")
+        if verbose: print("send frame")
         fs.udp_frame(frame)
         
         ping = fs.ping
-        print("send ping result")
+        if verbose: print("send ping result\n")
         fs.send_ping_result()
         cv2.putText(frame, str(ping)+"ms", (10,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
 

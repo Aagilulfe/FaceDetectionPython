@@ -7,6 +7,9 @@ import socket
 import struct
 import time
 
+#Flag for print activation
+verbose = False
+
 MAX_DGRAM = 2**16
 
 def dump_buffer(s):
@@ -15,7 +18,7 @@ def dump_buffer(s):
         seg, addr = s.recvfrom(MAX_DGRAM)
         print(seg[0])
         if struct.unpack("B", seg[0:1])[0] == 1:
-            print("finish emptying buffer")
+            if verbose: print("finish emptying buffer")
             break
 
 def resend_timestamp(s, timestamp, sender_addr):
@@ -23,16 +26,6 @@ def resend_timestamp(s, timestamp, sender_addr):
     #print(timestamp)
     #print(struct.pack("q", timestamp))
     s.sendto(struct.pack("q", timestamp), (sender_addr, sender_port))
-    
-def receive_feedback():
-    feedback_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    feedback_socket.bind(("192.168.1.102", 12346))
-    feedback_socket.settimeout(0.04)
-    try:
-        seg, _ = feedback_socket.recvfrom(MAX_DGRAM)
-    except socket.timeout:
-        pass
-    return seg
 
 def main(local_address):
     """ Getting image udp frame &
@@ -46,21 +39,26 @@ def main(local_address):
     ping = 0    # initialisation of ping
 
     while True:
+        if verbose: print("receiving packet")
         seg, sender_addr = s.recvfrom(MAX_DGRAM)
         if 1 < struct.unpack("B", seg[0:1])[0] < 255:
+            if verbose: print("-> it's part of frame")
             #print(struct.unpack("B", seg[0:1]))
             #print(seg[1:50])
             #print(struct.unpack("q", seg[1:9]))
             dat += seg[1:]
         elif struct.unpack("B", seg[0:1])[0] == 255:
+            if verbose: print("-> it's ping measure\n")
             # print(seg)
             ping = struct.unpack("q", seg[1:])[0]
-            print(ping)
+            # print(ping)
         else:
+            if verbose: print("-> it's end of frame")
             #print(struct.unpack("B", seg[0:1]))
             #print(struct.unpack("q", seg[1:9]))
             timestamp = struct.unpack("q", seg[1:9])[0]
             
+            if verbose: print("--> resend the timestamp")
             resend_timestamp(s, timestamp, sender_addr[0])
 
             #ping = int(time.time()*1000) - timestamp
