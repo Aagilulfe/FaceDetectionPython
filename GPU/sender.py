@@ -36,7 +36,7 @@ class FrameSegment(object):
         Run endlessly, waiting for timestamp 
         feedback from the receiver device
         and refreshing the current ping measure.
-        Stops when reading None value in 
+        Stop when reading None value in 
         self.ping var (flag from sender method).
         """
         while True:
