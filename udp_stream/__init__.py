@@ -1,4 +1,4 @@
 # __init__.py
 
-import receiver
-import sender
+from .receiver import receiver
+from .sender import sender

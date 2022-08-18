@@ -1,5 +1,5 @@
 from matplotlib.style import use
-from Detector import Detector
+from .Detector import Detector
 import argparse
 
 

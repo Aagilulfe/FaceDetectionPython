@@ -98,9 +98,9 @@ def main():
     
     # Prints the FPS stats
     fps_stat.stop()
-    print("\nFaceDetectorMediapipe:")
+    print("FaceDetectorMediapipe:")
     print("Elapsed time: {:.2f}".format(fps_stat.elapsed()))
-    print("FPS: {:.2f}".format(fps_stat.fps()))
+    print("FPS: {:.2f}\n".format(fps_stat.fps()))
 
 
 

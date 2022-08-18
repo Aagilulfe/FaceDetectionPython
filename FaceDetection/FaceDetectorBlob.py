@@ -23,8 +23,8 @@ class FaceDetector():
         self.minDetectionCon = minDetectionCon
 
         #read model
-        self.faceModel = cv2.dnn.readNetFromCaffe("models/res10_300x300_ssd_iter_140000.prototxt", 
-        caffeModel="models/res10_300x300_ssd_iter_140000.caffemodel")
+        self.faceModel = cv2.dnn.readNetFromCaffe("FaceDetection/blob_models/res10_300x300_ssd_iter_140000.prototxt", 
+        caffeModel="FaceDetection/blob_models/res10_300x300_ssd_iter_140000.caffemodel")
 
         #connection to the client
         self.CLIENT_IP = CLIENT_IP
@@ -139,9 +139,9 @@ def main(use_cuda=False):
     
     # Prints the FPS stats
     fps_stat.stop()
-    print("\nFaceDetectorBlob:")
+    print("FaceDetectorBlob:")
     print("Elapsed time: {:.2f}".format(fps_stat.elapsed()))
-    print("FPS: {:.2f}".format(fps_stat.fps()))
+    print("FPS: {:.2f}\n".format(fps_stat.fps()))
 
 
 

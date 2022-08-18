@@ -1,11 +1,18 @@
-import os
-import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# FaceDetectionPython
+#####################################################################################
 
+import GPU
 
-import FaceDetection.FaceDetectorMediapipe as FaceDetectorMediapipe
+import FaceDetection.FaceDetectorHaar as FaceDetectorHaar
 import FaceDetection.FaceDetectorBlob as FaceDetectorBlob
+import FaceDetection.FaceDetectorMediapipe as FaceDetectorMediapipe
 
+import FaceFilterMediapipe.apply_filter as apply_filter
 
-FaceDetectorMediapipe.main()    #faster
-#FaceDetectorBlob.main()         #more accurate
+#####################################################################################
+
+FaceDetectorHaar.FaceDetectorHaar()         #basic method
+FaceDetectorBlob.main()                     #more accurate
+FaceDetectorMediapipe.main()                #faster
+
+#apply_filter.apply_filter()
