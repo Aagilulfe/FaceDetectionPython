@@ -21,13 +21,13 @@ class FrameSegment(object):
     MAX_DGRAM = 2**16
     MAX_IMAGE_DGRAM = MAX_DGRAM - 64 # extract 64 bytes in case UDP frame overflown
     
-    def __init__(self, sock, port, addr): #127.0.0.1
+    def __init__(self, sock, port, addr, local_addr): #127.0.0.1
         self.s = sock
         self.port = port
         self.addr = addr
         self.ping = 0
         self.feedback_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.feedback_socket.bind(("192.168.1.102", 12346))
+        self.feedback_socket.bind((local_addr, 12346))
         
         self.thread_flag = True
         self.ping_var_lock = threading.Lock()   # threading lock to protect self.ping variable
@@ -125,7 +125,7 @@ class FrameSegment(object):
 
 
 
-def main(target_addr):
+def main(target_addr, local_addr):
     """ Top level main function """
     # Set up UDP socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -134,7 +134,7 @@ def main(target_addr):
     print("Sender started\nStream sent to {}:{}\n".format(receiver_addr, port))
 
     # Create an instance of FrameSegment class
-    fs = FrameSegment(s, port, addr=receiver_addr)
+    fs = FrameSegment(s, port, receiver_addr, local_addr)
 
     # Create the different threads
     print("Creating threads...")
@@ -155,4 +155,4 @@ def main(target_addr):
     
 
 if __name__ == "__main__":
-    main(target_addr = "192.168.1.102")
+    main(target_addr = "192.168.1.102", local_addr="localhost")

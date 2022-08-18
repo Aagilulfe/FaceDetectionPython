@@ -82,4 +82,4 @@ def main(listenning_addr):
     s.close()
 
 if __name__ == "__main__":
-    main(listenning_addr='192.168.1.102')
+    main(listenning_addr='localhost')
