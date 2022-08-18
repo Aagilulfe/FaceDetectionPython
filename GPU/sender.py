@@ -29,7 +29,9 @@ class FrameSegment(object):
         self.feedback_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.feedback_socket.bind(("192.168.1.102", 12346))
         
+        self.thread_flag = True
         self.ping_var_lock = threading.Lock()   # threading lock to protect self.ping variable
+        self.thread_flag_lock = threading.Lock()   # threading lock to protect self.thread_flag variable
     
     def receive_feedback(self):
         """
@@ -39,17 +41,20 @@ class FrameSegment(object):
         Stop when reading None value in 
         self.ping var (flag from sender method).
         """
-        while True:
-            seg, _ = self.feedback_socket.recvfrom(self.MAX_DGRAM)
+        while self.thread_flag:
+            self.feedback_socket.settimeout(3) # 3 seconds timeout
+            seg = None
+            try:
+                seg, _ = self.feedback_socket.recvfrom(self.MAX_DGRAM)
+            except socket.timeout:
+                print("timeout")
+                continue
             if seg != None:
-                # print(seg)
                 new_timestamp = int(time.time() * 1000)
-                #print(struct.unpack("q", seg)[0], new_timestamp)
+                # print(struct.unpack("q", seg)[0], new_timestamp)
                 with self.ping_var_lock:
-                    if self.ping == None:
-                        break
                     self.ping = (new_timestamp - struct.unpack("q", seg)[0]) // 2   # the go and return divided by 2
-            time.sleep(0.1) #wait for 100ms
+
         self.feedback_socket.close()
     
     def send_ping_result(self): # 255 flag to indicate ping packet
@@ -115,28 +120,32 @@ class FrameSegment(object):
         cap.release()
         cv2.destroyAllWindows()
         self.s.close()
-        with self.ping_var_lock:
-            self.ping = None    # transform self.ping into a flag to stop the feedback thread
+        with self.thread_flag_lock:
+            self.thread_flag = False    # transform self.ping into a flag to stop the feedback thread
 
 
 
-def main():
+def main(target_addr):
     """ Top level main function """
     # Set up UDP socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     port = 12345
-    receiver_addr = "192.168.1.102"
+    receiver_addr = target_addr
+    print("Sender started\nStream sent to {}:{}\n".format(receiver_addr, port))
 
     # Create an instance of FrameSegment class
     fs = FrameSegment(s, port, addr=receiver_addr)
 
     # Create the different threads
+    print("Creating threads...")
     main_thread = threading.Thread(target=fs.sender)
     feedback_handler_thread = threading.Thread(target=fs.receive_feedback)
 
     # Start the threads
+    print("Starting threads...")
     main_thread.start()
     feedback_handler_thread.start()
+    print("RUNNING")
 
     # Wait for them to end
     main_thread.join()
@@ -146,4 +155,4 @@ def main():
     
 
 if __name__ == "__main__":
-    main()
+    main(target_addr = "192.168.1.102")

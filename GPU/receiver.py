@@ -14,11 +14,12 @@ MAX_DGRAM = 2**16
 
 def dump_buffer(s):
     """ Emptying buffer frame """
+    print("emptying buffer...")
     while True:
         seg, addr = s.recvfrom(MAX_DGRAM)
         print(seg[0])
         if struct.unpack("B", seg[0:1])[0] == 1:
-            if verbose: print("finish emptying buffer")
+            print("finish emptying buffer")
             break
 
 def resend_timestamp(s, timestamp, sender_addr):
@@ -27,13 +28,19 @@ def resend_timestamp(s, timestamp, sender_addr):
     #print(struct.pack("q", timestamp))
     s.sendto(struct.pack("q", timestamp), (sender_addr, sender_port))
 
-def main(local_address):
+def main(listenning_addr):
     """ Getting image udp frame &
     concate before decode and output image """
     
+    local_address = listenning_addr
+    local_port = 12345
+
+    print("Receiver started")
+    print("Listening on {}:{}\n".format(local_address, local_port))
+
     # Set up socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.bind((local_address, 12345))    #127.0.0.1
+    s.bind((local_address, local_port))    #127.0.0.1
     dat = b''
     dump_buffer(s)
     ping = 0    # initialisation of ping
@@ -75,4 +82,4 @@ def main(local_address):
     s.close()
 
 if __name__ == "__main__":
-    main('192.168.1.102')
+    main(listenning_addr='192.168.1.102')
