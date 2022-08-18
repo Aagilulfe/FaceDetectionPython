@@ -134,11 +134,14 @@ def main():
     main_thread = threading.Thread(target=fs.sender)
     feedback_handler_thread = threading.Thread(target=fs.receive_feedback)
 
+    # Start the threads
     main_thread.start()
     feedback_handler_thread.start()
 
+    # Wait for them to end
     main_thread.join()
-    feedback_handler_thread.
+    feedback_handler_thread.join()
+    print("Threads stopped")
 
     
 
