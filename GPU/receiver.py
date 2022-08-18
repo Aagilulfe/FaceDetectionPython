@@ -5,7 +5,8 @@ import cv2
 import numpy as np
 import socket
 import struct
-import time
+#import time
+import argparse
 
 #Flag for print activation
 verbose = False
@@ -81,5 +82,19 @@ def main(listenning_addr):
     cv2.destroyAllWindows()
     s.close()
 
+
 if __name__ == "__main__":
-    main(listenning_addr="192.168.1.102")
+    # init argument parser
+    parser = argparse.ArgumentParser(description="=====UDP stream receiver=====\n", formatter_class=argparse.RawTextHelpFormatter)
+
+    parser.add_argument(
+        "--ip", 
+        help="IP address to listen on", 
+        default="192.168.1.102", 
+        type=str
+    )
+
+    args = parser.parse_args()
+    listenning_addr = args.ip
+
+    main(listenning_addr)

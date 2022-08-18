@@ -9,6 +9,7 @@ import struct
 import math
 import time
 import threading
+import argparse
 
 #Flag for print activation
 verbose = False
@@ -155,4 +156,24 @@ def main(target_addr, local_addr):
     
 
 if __name__ == "__main__":
+    # init argument parser
+    parser = argparse.ArgumentParser(description="=====UDP stream receiver=====\n", formatter_class=argparse.RawTextHelpFormatter)
+
+    parser.add_argument(
+        "--target-ip", 
+        help="IP address to stream to", 
+        default="192.168.1.102", 
+        type=str
+    )
+    parser.add_argument(
+        "--local-ip", 
+        help="IP address to listen on", 
+        default="192.168.1.37", 
+        type=str
+    )
+
+    args = parser.parse_args()
+    target_addr = args.target_ip
+    local_addr = args.local_ip
+
     main(target_addr = "192.168.1.102", local_addr="192.168.1.37")
