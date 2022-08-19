@@ -132,7 +132,8 @@ def main(target_addr, local_addr):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     port = 12345
     receiver_addr = target_addr
-    print("Sender started\nStream sent to {}:{}\n".format(receiver_addr, port))
+    print("Sender started\nStream sent to {}:{}".format(receiver_addr, port))
+    print("local address: {}".format(local_addr))
 
     # Create an instance of FrameSegment class
     fs = FrameSegment(s, port, receiver_addr, local_addr)
