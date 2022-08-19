@@ -142,11 +142,7 @@ def main(target_addr, local_addr, display, verbose):
     port = 12345
     receiver_addr = target_addr
 
-    try:
-        os.system('cls')
-    except:
-        pass
-    
+    os.system('cls')
     print("Sender started\n\nStream sent to {} : {}".format(receiver_addr, port))
     print("Local address: {}\nLocal display: {}\n===================================\n".format(local_addr, display))
 
