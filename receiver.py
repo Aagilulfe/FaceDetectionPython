@@ -8,6 +8,11 @@ import struct
 import argparse
 import os
 
+# Face detection algorithms
+import FaceDetection.FaceDetectorHaar as FaceDetectorHaar
+import FaceDetection.FaceDetectorBlob as FaceDetectorBlob
+import FaceDetection.FaceDetectorMediapipe as FaceDetectorMediapipe
+
 
 MAX_DGRAM = 2**16
 
@@ -30,6 +35,10 @@ def resend_timestamp(s, timestamp, sender_addr):
 def main(listenning_addr, verbose):
     """ Getting image udp frame &
     concate before decode and output image """
+    
+    # Choice of detection method
+    detector = FaceDetectorBlob.FaceDetector(use_cuda=True)
+    #detector = FaceDetectorMediapipe.FaceDetector()
     
     local_address = listenning_addr
     local_port = 12345
@@ -72,8 +81,12 @@ def main(listenning_addr, verbose):
             #ping = int(time.time()*1000) - timestamp
             dat += seg[9:]
             img = cv2.imdecode(np.frombuffer(dat, dtype=np.uint8), 1)
-            cv2.putText(img, str(ping)+"ms", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            
+            img, bbox = detector.findFaces(img)
+            
+            cv2.putText(img, str(ping)+"ms", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
             cv2.imshow('receiver', img)
+            
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
             dat = b''

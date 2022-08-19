@@ -17,7 +17,7 @@ class FaceDetector():
     minDetectionCon: float, minimum confidence for detection (between 0 and 1)
     """
     
-    def __init__(self, CLIENT_IP, CLIENT_PORT, use_cuda, minDetectionCon=0.7):
+    def __init__(self, use_cuda, minDetectionCon=0.7):
 
         #minimum of detection
         self.minDetectionCon = minDetectionCon
@@ -27,16 +27,16 @@ class FaceDetector():
         caffeModel="FaceDetection/blob_models/res10_300x300_ssd_iter_140000.caffemodel")
 
         #connection to the client
-        self.CLIENT_IP = CLIENT_IP
-        self.CLIENT_PORT = CLIENT_PORT
+        #self.CLIENT_IP = CLIENT_IP
+        #self.CLIENT_PORT = CLIENT_PORT
 
         #video stream process
         dispW= 640
         dispH= 480
 
         #I/O pipelines
-        self.camSet='nvarguscamerasrc ! video/x-raw(memory:NVMM), width=640, height=480, format=NV12, framerate=21/1 ! nvvidconv flip-method=0 ! video/x-raw, width='+str(dispW)+', height='+str(dispH)+', format=BGRx ! videoconvert ! video/x-raw, format=BGR ! appsink'
-        self.out = cv2.VideoWriter('appsrc ! videoconvert ! x264enc tune=zerolatency bitrate=500 speed-preset=superfast ! rtph264pay ! udpsink host='+self.CLIENT_IP+' port='+str(self.CLIENT_PORT),cv2.CAP_GSTREAMER,0, 20, (dispW, dispH), True)
+        #self.camSet='nvarguscamerasrc ! video/x-raw(memory:NVMM), width=640, height=480, format=NV12, framerate=21/1 ! nvvidconv flip-method=0 ! video/x-raw, width='+str(dispW)+', height='+str(dispH)+', format=BGRx ! videoconvert ! video/x-raw, format=BGR ! appsink'
+        #self.out = cv2.VideoWriter('appsrc ! videoconvert ! x264enc tune=zerolatency bitrate=500 speed-preset=superfast ! rtph264pay ! udpsink host='+self.CLIENT_IP+' port='+str(self.CLIENT_PORT),cv2.CAP_GSTREAMER,0, 20, (dispW, dispH), True)
 
         #enable cuda if required
         if use_cuda:
@@ -103,7 +103,7 @@ def main(use_cuda=False):
     assert cap.isOpened(), 'Cannot open camera'
     
     pTime = 0
-    detector = FaceDetector("0.0.0.0", 5000, use_cuda)
+    detector = FaceDetector(use_cuda)
     
     fps_stat = FPS().start()    # start the fps measurements
 
