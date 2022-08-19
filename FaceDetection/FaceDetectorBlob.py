@@ -96,8 +96,8 @@ def main(use_cuda=False):
     dispW= 640
     dispH= 480
     
-    camSet = 0
-    #camSet='ksvideosrc ! video/x-raw(memory:NVMM), width=640, height=480, format=NV12, framerate=21/1 ! nvvidconv flip-method=0 ! video/x-raw, width='+str(dispW)+', height='+str(dispH)+', format=BGRx ! videoconvert ! video/x-raw, format=BGR ! appsink'
+    #camSet = 0
+    camSet = 'nvarguscamerasrc ! video/x-raw(memory:NVMM), width=1280, height=720, format=(string)NV12, framerate=(fraction)15/1 ! nvvidconv ! video/x-raw, format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR ! appsink'
     
     cap = cv2.VideoCapture(camSet)
     assert cap.isOpened(), 'Cannot open camera'
