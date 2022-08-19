@@ -101,6 +101,7 @@ class FrameSegment(object):
 
     def sender(self):
         cap = cv2.VideoCapture(0)   #Webcam
+        print(cap.isOpened())
         #cap = cv2.VideoCapture(1)   #ZED cam
         while (cap.isOpened()):
             _, frame = cap.read()
@@ -133,7 +134,7 @@ def main(target_addr, local_addr):
     port = 12345
     receiver_addr = target_addr
     print("Sender started\nStream sent to {}:{}".format(receiver_addr, port))
-    print("local address: {}".format(local_addr))
+    print("local address: {}\n".format(local_addr))
 
     # Create an instance of FrameSegment class
     fs = FrameSegment(s, port, receiver_addr, local_addr)
