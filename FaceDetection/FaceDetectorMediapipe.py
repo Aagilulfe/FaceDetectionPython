@@ -96,6 +96,9 @@ def main():
         if key == ord('s'):
             stats_flag = not(stats_flag)
     
+    cap.release()
+    cv2.destroyAllWindows()
+    
     # Prints the FPS stats
     fps_stat.stop()
     print("FaceDetectorMediapipe:")
