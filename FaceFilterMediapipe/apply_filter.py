@@ -3,6 +3,7 @@ import cv2
 import math
 import numpy as np
 import csv
+from imutils.video import FPS
 
 
 # Constrains points to be inside boundary
@@ -316,6 +317,8 @@ def apply_filter():
 
     iter_filter_keys = iter(filters_config.keys())
     filters, multi_filter_runtime = load_filter(next(iter_filter_keys))
+    
+    fps_stat = FPS().start()    # start the fps measurements
 
     # The main loop
     while True:
@@ -430,13 +433,17 @@ def apply_filter():
                     output = temp1 + temp2
 
                 frame = output = np.uint8(output)
+                
+            cv2.putText(frame, "Press Q to exit", (10, 20), cv2.FONT_HERSHEY_PLAIN, 1.2, (0, 0, 255), 1)
+            cv2.putText(frame, "Press F to change filters", (10, 40), cv2.FONT_HERSHEY_PLAIN, 1.2, (0, 0, 255), 1)
 
-            cv2.putText(frame, "Press F to change filters", (10, 20), cv2.FONT_HERSHEY_SIMPLEX, .5, (255, 0, 0), 1)
-
-            cv2.imshow("Face Filter", output)
-
+            cv2.imshow("FaceFilterMediapipe", output)
+            
+            fps_stat.update()
+             
             keypressed = cv2.waitKey(1) & 0xFF
-            if keypressed == 27:
+            #if keypressed == 27:
+            if keypressed == ord('q'):
                 break
             # Put next filter if 'f' is pressed
             elif keypressed == ord('f'):
@@ -450,6 +457,12 @@ def apply_filter():
 
     cap.release()
     cv2.destroyAllWindows()
+    
+    # Prints the FPS stats
+    fps_stat.stop()
+    print("FaceFilterMediapipe:")
+    print("Elapsed time: {:.2f}".format(fps_stat.elapsed()))
+    print("FPS: {:.2f}\n".format(fps_stat.fps()))
 
 
 if __name__ == '__main__':

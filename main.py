@@ -14,8 +14,12 @@ import udp_stream.receiver as receiver
 
 #####################################################################################
 
-FaceDetectorHaar.FaceDetectorHaar()         #basic method
-FaceDetectorBlob.main()                     #more accurate
-FaceDetectorMediapipe.main()                #faster
+#FaceDetectorHaar.FaceDetectorHaar()         #basic method
+#FaceDetectorBlob.main()                     #more accurate
+#FaceDetectorMediapipe.main()                #faster
 
 #apply_filter.apply_filter()
+
+
+#####################################################################################
+
