@@ -23,7 +23,7 @@ class Detector:
 
         #I/O pipelines
         #self.camSet = 0
-        self.camSet='nvarguscamerasrc ! queue flush-on-eos=true ! video/x-raw(memory:NVMM), width=640, height=480, format=NV12, framerate=21/1 ! nvvidconv flip-method='+str(self.flip)+' ! video/x-raw, width='+str(dispW)+', height='+str(dispH)+', format=BGRx ! videoconvert ! video/x-raw, format=BGR ! appsink'
+        self.camSet='nvarguscamerasrc ! video/x-raw(memory:NVMM), width=1280, height=720, format=(string)NV12, framerate=(fraction)15/1 ! nvvidconv ! video/x-raw, format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR ! appsink'
         self.directToClient = cv2.VideoWriter('appsrc ! videoconvert ! x264enc tune=zerolatency bitrate=500 speed-preset=superfast ! rtph264pay ! udpsink host='+self.CLIENT_IP+' port='+str(self.CLIENT_PORT+1),cv2.CAP_GSTREAMER,0, 20, (dispW, dispH), True)
         self.out = cv2.VideoWriter('appsrc ! videoconvert ! x264enc tune=zerolatency bitrate=500 speed-preset=superfast ! rtph264pay ! udpsink host='+self.CLIENT_IP+' port='+str(self.CLIENT_PORT),cv2.CAP_GSTREAMER,0, 20, (dispW, dispH), True)
 
@@ -43,7 +43,7 @@ class Detector:
         # cv2.waitKey(0)
 
     def processVideo(self):
-        cap = cv2.VideoCapture(0)
+        cap = cv2.VideoCapture(self.camSet)
         # cap = cv2.VideoCapture(videoName)
         if (cap.isOpened() == False):
             print("Error opening video stream or file")
