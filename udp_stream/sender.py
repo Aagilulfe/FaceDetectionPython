@@ -105,6 +105,9 @@ class FrameSegment(object):
         #cap = cv2.VideoCapture(1)   #ZED cam
         while (cap.isOpened()):
             _, frame = cap.read()
+            
+            if frame is None: continue
+            
             if verbose: print("send frame")
             self.udp_frame(frame)
             
