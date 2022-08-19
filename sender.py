@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from __future__ import division
-#from sys import displayhook
 from tabnanny import verbose
 import cv2
 import numpy as np
@@ -104,8 +103,8 @@ class FrameSegment(object):
             count -= 1
 
     def sender(self):
-        cap = cv2.VideoCapture('nvarguscamerasrc ! video/x-raw(memory:NVMM), width=1280, height=720, format=(string)NV12, framerate=(fraction)15/1 ! nvvidconv ! video/x-raw, format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR ! appsink', cv2.CAP_GSTREAMER)
-        #cap = cv2.VideoCapture(0)   #Webcam
+        #cap = cv2.VideoCapture('nvarguscamerasrc ! video/x-raw(memory:NVMM), width=1280, height=720, format=(string)NV12, framerate=(fraction)15/1 ! nvvidconv ! video/x-raw, format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR ! appsink', cv2.CAP_GSTREAMER)
+        cap = cv2.VideoCapture(0)   #Webcam
         #print(cap.isOpened())
         #cap = cv2.VideoCapture(1)   #ZED cam
         while (cap.isOpened()):
