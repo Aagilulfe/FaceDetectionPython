@@ -9,6 +9,9 @@ import FaceDetection.FaceDetectorMediapipe as FaceDetectorMediapipe
 
 import FaceFilterMediapipe.apply_filter as apply_filter
 
+import udp_stream.sender as sender
+import udp_stream.receiver as receiver
+
 #####################################################################################
 
 FaceDetectorHaar.FaceDetectorHaar()         #basic method
