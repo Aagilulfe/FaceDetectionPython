@@ -177,4 +177,4 @@ if __name__ == "__main__":
     target_addr = args.target_ip
     local_addr = args.local_ip
 
-    main(target_addr = "192.168.1.102", local_addr="192.168.1.37")
+    main(target_addr, local_addr)
