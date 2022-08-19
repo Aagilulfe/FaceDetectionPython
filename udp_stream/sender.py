@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import division
-from sys import displayhook
+#from sys import displayhook
 from tabnanny import verbose
 import cv2
 import numpy as np
@@ -29,6 +29,7 @@ class FrameSegment(object):
         self.ping = 0
         self.display = display
         self.verbose = verbose
+        self.timeout_count = 0  # number of times we timeout while waiting for the receiver timestamp feedback
         self.feedback_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.feedback_socket.bind((local_addr, 12346))
         
@@ -50,6 +51,7 @@ class FrameSegment(object):
             try:
                 seg, _ = self.feedback_socket.recvfrom(self.MAX_DGRAM)
             except socket.timeout:
+                self.timeout_count += 1
                 print("timeout")
                 continue
             if seg != None:
@@ -123,8 +125,8 @@ class FrameSegment(object):
                 cv2.putText(frame, str(ping)+"ms", (10,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
                 cv2.imshow("sender", frame)
             
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    break
         
         cap.release()
         cv2.destroyAllWindows()
