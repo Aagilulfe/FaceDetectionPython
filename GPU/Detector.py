@@ -22,8 +22,8 @@ class Detector:
         self.local_display = local_display
 
         #I/O pipelines
-        self.camSet = 0
-        #self.camSet='nvarguscamerasrc ! queue flush-on-eos=true ! video/x-raw(memory:NVMM), width=640, height=480, format=NV12, framerate=21/1 ! nvvidconv flip-method='+str(self.flip)+' ! video/x-raw, width='+str(dispW)+', height='+str(dispH)+', format=BGRx ! videoconvert ! video/x-raw, format=BGR ! appsink'
+        #self.camSet = 0
+        self.camSet='nvarguscamerasrc ! queue flush-on-eos=true ! video/x-raw(memory:NVMM), width=640, height=480, format=NV12, framerate=21/1 ! nvvidconv flip-method='+str(self.flip)+' ! video/x-raw, width='+str(dispW)+', height='+str(dispH)+', format=BGRx ! videoconvert ! video/x-raw, format=BGR ! appsink'
         self.directToClient = cv2.VideoWriter('appsrc ! videoconvert ! x264enc tune=zerolatency bitrate=500 speed-preset=superfast ! rtph264pay ! udpsink host='+self.CLIENT_IP+' port='+str(self.CLIENT_PORT+1),cv2.CAP_GSTREAMER,0, 20, (dispW, dispH), True)
         self.out = cv2.VideoWriter('appsrc ! videoconvert ! x264enc tune=zerolatency bitrate=500 speed-preset=superfast ! rtph264pay ! udpsink host='+self.CLIENT_IP+' port='+str(self.CLIENT_PORT),cv2.CAP_GSTREAMER,0, 20, (dispW, dispH), True)
 
