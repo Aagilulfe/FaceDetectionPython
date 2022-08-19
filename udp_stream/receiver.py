@@ -5,11 +5,9 @@ import cv2
 import numpy as np
 import socket
 import struct
-#import time
 import argparse
+import os
 
-#Flag for print activation
-verbose = False
 
 MAX_DGRAM = 2**16
 
@@ -20,7 +18,7 @@ def dump_buffer(s):
         seg, addr = s.recvfrom(MAX_DGRAM)
         print(seg[0])
         if struct.unpack("B", seg[0:1])[0] == 1:
-            print("finish emptying buffer")
+            print("-->finish emptying buffer\n")
             break
 
 def resend_timestamp(s, timestamp, sender_addr):
@@ -29,15 +27,16 @@ def resend_timestamp(s, timestamp, sender_addr):
     #print(struct.pack("q", timestamp))
     s.sendto(struct.pack("q", timestamp), (sender_addr, sender_port))
 
-def main(listenning_addr):
+def main(listenning_addr, verbose):
     """ Getting image udp frame &
     concate before decode and output image """
     
     local_address = listenning_addr
     local_port = 12345
-
-    print("Receiver started")
-    print("Listening on {}:{}\n".format(local_address, local_port))
+    
+    os.system('cls')
+    print("Receiver started\n")
+    print("Listening on {} : {}\n===================================\n".format(local_address, local_port))
 
     # Set up socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -45,7 +44,8 @@ def main(listenning_addr):
     dat = b''
     dump_buffer(s)
     ping = 0    # initialisation of ping
-
+    
+    print("\n===>RUNNING\n")
     while True:
         if verbose: print("receiving packet")
         seg, sender_addr = s.recvfrom(MAX_DGRAM)
@@ -93,8 +93,11 @@ if __name__ == "__main__":
         default="192.168.1.102", 
         type=str
     )
-
+    parser.add_argument('--verbose', help="enables print logs", action='store_true')
+    
+    verbose = parser.parse_args().verbose
+    
     args = parser.parse_args()
     listenning_addr = args.ip
 
-    main(listenning_addr)
+    main(listenning_addr, verbose)

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import division
+from sys import displayhook
 from tabnanny import verbose
 import cv2
 import numpy as np
@@ -10,9 +11,8 @@ import math
 import time
 import threading
 import argparse
+import os
 
-#Flag for print activation
-verbose = False
 
 class FrameSegment(object):
     """ 
@@ -22,11 +22,13 @@ class FrameSegment(object):
     MAX_DGRAM = 2**16
     MAX_IMAGE_DGRAM = MAX_DGRAM - 64 # extract 64 bytes in case UDP frame overflown
     
-    def __init__(self, sock, port, addr, local_addr): #127.0.0.1
+    def __init__(self, sock, port, addr, local_addr, display, verbose): #127.0.0.1
         self.s = sock
         self.port = port
         self.addr = addr
         self.ping = 0
+        self.display = display
+        self.verbose = verbose
         self.feedback_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.feedback_socket.bind((local_addr, 12346))
         
@@ -102,24 +104,25 @@ class FrameSegment(object):
     def sender(self):
         cap = cv2.VideoCapture('nvarguscamerasrc ! video/x-raw(memory:NVMM), width=1280, height=720, format=(string)NV12, framerate=(fraction)15/1 ! nvvidconv ! video/x-raw, format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR ! appsink', cv2.CAP_GSTREAMER)
         #cap = cv2.VideoCapture(0)   #Webcam
-        print(cap.isOpened())
+        #print(cap.isOpened())
         #cap = cv2.VideoCapture(1)   #ZED cam
         while (cap.isOpened()):
             _, frame = cap.read()
             
             if frame is None: continue
             
-            if verbose: print("send frame")
+            if self.verbose: print("send frame")
             self.udp_frame(frame)
             
             with self.ping_var_lock:
                 ping = self.ping
-            if verbose: print("send ping result\n")
+            if self.verbose: print("send ping result\n")
             self.send_ping_result()
-            cv2.putText(frame, str(ping)+"ms", (10,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
-
-
-            cv2.imshow("sender", frame)
+            
+            if self.display:
+                cv2.putText(frame, str(ping)+"ms", (10,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
+                cv2.imshow("sender", frame)
+            
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
         
@@ -131,17 +134,19 @@ class FrameSegment(object):
 
 
 
-def main(target_addr, local_addr):
+def main(target_addr, local_addr, display, verbose):
     """ Top level main function """
     # Set up UDP socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     port = 12345
     receiver_addr = target_addr
-    print("Sender started\nStream sent to {}:{}".format(receiver_addr, port))
-    print("local address: {}\n".format(local_addr))
+
+    os.system('cls')
+    print("Sender started\n\nStream sent to {} : {}".format(receiver_addr, port))
+    print("Local address: {}\nLocal display: {}\n===================================\n".format(local_addr, display))
 
     # Create an instance of FrameSegment class
-    fs = FrameSegment(s, port, receiver_addr, local_addr)
+    fs = FrameSegment(s, port, receiver_addr, local_addr, display, verbose)
 
     # Create the different threads
     print("Creating threads...")
@@ -152,12 +157,12 @@ def main(target_addr, local_addr):
     print("Starting threads...")
     main_thread.start()
     feedback_handler_thread.start()
-    print("RUNNING")
+    print("\n===>RUNNING\n")
 
     # Wait for them to end
     main_thread.join()
     feedback_handler_thread.join()
-    print("Threads stopped")
+    print("All threads stopped\n")
 
     
 
@@ -177,9 +182,15 @@ if __name__ == "__main__":
         default="192.168.1.37", 
         type=str
     )
+    parser.add_argument('--display', help="this flag enables sender-side display", action='store_true')
+    parser.add_argument('--verbose', help="enables print logs", action='store_true')
 
+    display = parser.parse_args().display
+    verbose = parser.parse_args().verbose
+    
     args = parser.parse_args()
     target_addr = args.target_ip
     local_addr = args.local_ip
+    
 
-    main(target_addr, local_addr)
+    main(target_addr, local_addr, display, verbose)
