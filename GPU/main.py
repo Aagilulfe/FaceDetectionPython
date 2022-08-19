@@ -74,7 +74,7 @@ if __name__ == "__main__":
     print("RUNNING... (Press 'q' to quit)")
     print("\n==============================")  
 
-    if device == 'cpu':
+    if device == "'cpu'":
         use_cuda = False
     else:
         use_cuda = True
